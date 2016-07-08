@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Author: QIN Shuo
 % Organization: RRR
-% Date: 2016/7/7
+% Date: 2016/7/8
 
 
 
@@ -16,7 +16,6 @@
 %
 
 function [ dicom_series status ] = Load_Dicom_Series( dicom_path )
-
     
 
 end
