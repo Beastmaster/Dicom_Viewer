@@ -50,10 +50,12 @@ warning('off','all');
         end
         info_struct = [info_struct temp_struct];
     end
-    disp('All dicom tag informations are extracted....');
+    disp('All dicom tag informations are extracted!');
     
     %%%% Sort tag
+    disp('Loading dicom files ... ');
     xxx = sort_tag(info_struct);
+    disp('Loading dicom file Done !');
     
 end
 

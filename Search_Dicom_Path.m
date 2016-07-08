@@ -10,7 +10,6 @@
 % Search a secified path to find all dicom files
 % Recursively
 function dicom_list = Search_Dicom_Path(path)
-disp('Note: Please dicom files must have suffix: .dcm');
 if ~isdir(path)
     disp('Error: input path is not valid');
     return
