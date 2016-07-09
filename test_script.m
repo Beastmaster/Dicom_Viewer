@@ -9,19 +9,29 @@
 %%%%%%       %%%%%
 
 clc;
-clear all
+clear all;
 close all;
 
-Load_Dicom_Series('D:\QIN\image\breast_test','PatientName','SeriesDescription','AcquisitionTime')
+%Load_Dicom_Series('D:\QIN\image\breast_test','PatientName','SeriesDescription','AcquisitionTime')
 
 dicom_series = load('dicom_series.mat');
 dicom_series = dicom_series.dicom_series;
 
-info_struct = load('info_struct.mat');
-info_struct = info_struct.info_struct;
+data = dicom_series(1).data;
 
-aa = sort_tag2(info_struct);
-
-bb = 0;
-
-
+ddObj = reslice_data(data);
+a = '';
+i = 1;
+while(~strcmp(a,'q'))
+    prompt = 'input: ';
+    a = input(prompt,'s');
+    
+    oo = ddObj.reslice('x',i);
+    imshow(oo,[])
+    
+    i = i+1;
+    if i>380
+        break;
+    end
+    disp(strcat('i is : ',num2str(i)));
+end
