@@ -36,7 +36,7 @@ warning('off','all');
     for i = 1:length(dicom_list)
         info = dicominfo(char(dicom_list(i)));
         temp_struct = [];
-        temp_struct = setfield(temp_struct,'Filename',info.Filename);
+        temp_struct = setfield(temp_struct,'Filename',info.Filename); % tag: Filename are added auto
         for j=1:length(varargin)
             % struct field
             field = char(varargin(j));
@@ -54,9 +54,11 @@ warning('off','all');
     
     %%%% Sort tag
     disp('Loading dicom files ... ');
-    xxx = sort_tag(info_struct);
+    dicom_series = sort_tag2(info_struct);
     disp('Loading dicom file Done !');
     
+    %save('info_struct.mat','info_struct');
+    %save('dicom_series.mat','dicom_series');
 end
 
 
@@ -134,6 +136,10 @@ function out = sort_tag( infos )
     out = [out;ss];
     
 end
+
+
+
+
 
 
 
