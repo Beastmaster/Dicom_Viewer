@@ -22,7 +22,7 @@ function varargout = Dicom_Viewer(varargin)
 
 % Edit the above text to modify the response to help Dicom_Viewer
 
-% Last Modified by GUIDE v2.5 09-Jul-2016 15:22:56
+% Last Modified by GUIDE v2.5 13-Jul-2016 11:59:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,17 +82,38 @@ function series_list_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns series_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from series_list
 handles.output = hObject;
-index = get(handles. series_list,'value');
+index = get(handles.series_list,'value');
 if isempty(index)   
     return; 
 end
 handles.CurrentImage = handles.DataSet(index).data;
+handles.CurrentInfo = handles.DataSet(index).tag;
+set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
+[x y z] = size(handles.CurrentImage);
 hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',1);
+% view1 
+temp = get(handles.slider1,'Value');
+if temp == 0
+    immx = hh.reslice('x',1);
+else
+    immx = hh.reslice('x',int16( x * temp));
+end
 imshow(immx,[],'Parent',handles.view1);
-immy = hh.reslice('y',1);
+% view2
+temp = get(handles.slider2,'Value');
+if temp == 0
+    immy = hh.reslice('y',1);
+else
+    immy = hh.reslice('y',int16( y * temp));
+end
 imshow(immy,[],'Parent',handles.view2);
-immz = hh.reslice('z',1);
+% view3
+temp = get(handles.slider3,'Value');
+if temp == 0
+    immz = hh.reslice('z',1);
+else
+    immz = hh.reslice('z',int16( z * temp));
+end
 imshow(immz,[],'Parent',handles.view3);
 
 guidata(hObject, handles);
@@ -131,7 +152,23 @@ for i = 1: len_set
     lists = [lists,temp_str];
 end
 handles.CurrentImage = handles.DataSet(1).data;
+handles.CurrentInfo = handles.DataSet(1).tag;
 set(handles.series_list,'string',lists);
+index = get(handles.series_list,'value');
+if isempty(index)   
+    return; 
+end
+
+% refresh view
+set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
+hh = reslice_data(handles.CurrentImage);
+immx = hh.reslice('x',1);
+imshow(immx,[],'Parent',handles.view1);
+immy = hh.reslice('y',1);
+imshow(immy,[],'Parent',handles.view2);
+immz = hh.reslice('z',1);
+imshow(immz,[],'Parent',handles.view3);
+
 guidata(hObject, handles);
 
 
@@ -150,14 +187,24 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-handles.CurrentImage = handles.DataSet(index).data;
+handles.output = hObject;
+if ~isfield(handles,'CurrentImage')
+    return;
+end
+[x y z] = size(handles.CurrentImage);
+%set(handles.slice1_txt, 'min', 1);
+%set(handles.slice1_txt, 'max', x);
+if x>1
+set(handles.slider1, 'SliderStep', [1/x,1/x]);
+end
+index =int16( x * get(hObject,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slice1_txt, 'String', num2str(index));
 hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',1);
+immx = hh.reslice('x',index);
 imshow(immx,[],'Parent',handles.view1);
-immy = hh.reslice('y',1);
-imshow(immy,[],'Parent',handles.view2);
-immz = hh.reslice('z',1);
-imshow(immz,[],'Parent',handles.view3);
 
 
 
@@ -183,14 +230,23 @@ function slider2_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-handles.CurrentImage = handles.DataSet(index).data;
+handles.output = hObject;
+if ~isfield(handles,'CurrentImage')
+    return;
+end
+[x y z] = size(handles.CurrentImage);
+if y>1
+set(handles.slider2, 'SliderStep', [1/y,1/y]);
+end
+index =int16( y * get(hObject,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slice2_txt, 'String', num2str(index));
 hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',1);
-imshow(immx,[],'Parent',handles.view1);
-immy = hh.reslice('y',1);
+immy = hh.reslice('y',index);
 imshow(immy,[],'Parent',handles.view2);
-immz = hh.reslice('z',1);
-imshow(immz,[],'Parent',handles.view3);
+
 
 
 
@@ -216,14 +272,24 @@ function slider3_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-handles.CurrentImage = handles.DataSet(index).data;
+handles.output = hObject;
+if ~isfield(handles,'CurrentImage')
+    return;
+end
+[x y z] = size(handles.CurrentImage);
+
+if z>1
+set(handles.slider3, 'SliderStep', [1/z,1/z]);
+end
+index =int16( z * get(hObject,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slice3_txt, 'String', num2str(index));
 hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',1);
-imshow(immx,[],'Parent',handles.view1);
-immy = hh.reslice('y',1);
-imshow(immy,[],'Parent',handles.view2);
-immz = hh.reslice('z',1);
+immz = hh.reslice('z',index);
 imshow(immz,[],'Parent',handles.view3);
+guidata(hObject, handles);
 
 
 
@@ -249,6 +315,51 @@ function slider_time_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+handles.output = hObject;
+
+time_points = length(handles.DataSet);
+if time_points>0
+    set(handles.slider_time, 'SliderStep', [1/time_points,1/time_points]);
+end
+index =int16( time_points * get(hObject,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+handles.CurrentImage = handles.DataSet(index).data;
+handles.CurrentInfo = handles.DataSet(index).tag;
+set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
+set(handles.text6, 'String', num2str(index));
+% current data
+[x y z] = size(handles.CurrentImage);
+hh = reslice_data(handles.CurrentImage);
+% view1
+index =int16( x * get(handles.slider1,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slider1, 'String', num2str(index));
+immz = hh.reslice('x',index);
+imshow(immz,[],'Parent',handles.view1);
+% view 2
+index =int16( y * get(handles.slider2,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slider2, 'String', num2str(index));
+immz = hh.reslice('y',index);
+imshow(immz,[],'Parent',handles.view2);
+% view 3
+index =int16( z * get(handles.slider3,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(handles.slider3, 'String', num2str(index));
+immz = hh.reslice('z',index);
+imshow(immz,[],'Parent',handles.view3);
+
+guidata(hObject, handles);
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -277,13 +388,4 @@ function overlay_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-
-
-
-
-%% Manual defined private functions
-%
-%
-function refresh_view(hObject, eventdata, handles)
-    
 
