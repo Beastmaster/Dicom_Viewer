@@ -13,7 +13,7 @@
 %           specified dicom tag description. Level by their order
 %               'PatientName','SeriesDescription','AcquisitionTime'
 % Output: 
-%       dicom_series: a series of dicom data + dicom tag information
+%       dicom_series: {'tag',info,'data',data}.a series of dicom data + dicom tag information
 % Call: Search_Dicom_Path.m sort_tag2.m
 % Example: Load_Dicom_Series('D:\QIN\image\','PatientName','SeriesDescription','AcquisitionTime')
 function dicom_series = Load_Dicom_Series( dicom_path , varargin)

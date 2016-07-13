@@ -81,6 +81,23 @@ function series_list_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns series_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from series_list
+handles.output = hObject;
+index = get(handles. series_list,'value');
+if isempty(index)   
+    return; 
+end
+handles.CurrentImage = handles.DataSet(index).data;
+hh = reslice_data(handles.CurrentImage);
+immx = hh.reslice('x',1);
+imshow(immx,[],'Parent',handles.view1);
+immy = hh.reslice('y',1);
+imshow(immy,[],'Parent',handles.view2);
+immz = hh.reslice('z',1);
+imshow(immz,[],'Parent',handles.view3);
+
+guidata(hObject, handles);
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -101,6 +118,21 @@ function load_data_Callback(hObject, eventdata, handles)
 % hObject    handle to load_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%handles.output = hObject;
+temp_folder = uigetdir('D:\QIN\image');
+handles.DataSet = Load_Dicom_Series(temp_folder,'PatientName','SeriesDescription','AcquisitionTime');
+lists = [];
+len_set = length(handles.DataSet);
+if len_set<1
+    return
+end
+for i = 1: len_set
+    temp_str = cellstr(handles.DataSet(i).tag.SeriesDescription);
+    lists = [lists,temp_str];
+end
+handles.CurrentImage = handles.DataSet(1).data;
+set(handles.series_list,'string',lists);
+guidata(hObject, handles);
 
 
 % --- Executes on button press in select_series.
@@ -118,6 +150,17 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+handles.CurrentImage = handles.DataSet(index).data;
+hh = reslice_data(handles.CurrentImage);
+immx = hh.reslice('x',1);
+imshow(immx,[],'Parent',handles.view1);
+immy = hh.reslice('y',1);
+imshow(immy,[],'Parent',handles.view2);
+immz = hh.reslice('z',1);
+imshow(immz,[],'Parent',handles.view3);
+
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -140,6 +183,17 @@ function slider2_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+handles.CurrentImage = handles.DataSet(index).data;
+hh = reslice_data(handles.CurrentImage);
+immx = hh.reslice('x',1);
+imshow(immx,[],'Parent',handles.view1);
+immy = hh.reslice('y',1);
+imshow(immy,[],'Parent',handles.view2);
+immz = hh.reslice('z',1);
+imshow(immz,[],'Parent',handles.view3);
+
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -162,6 +216,17 @@ function slider3_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+handles.CurrentImage = handles.DataSet(index).data;
+hh = reslice_data(handles.CurrentImage);
+immx = hh.reslice('x',1);
+imshow(immx,[],'Parent',handles.view1);
+immy = hh.reslice('y',1);
+imshow(immy,[],'Parent',handles.view2);
+immz = hh.reslice('z',1);
+imshow(immz,[],'Parent',handles.view3);
+
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -210,3 +275,15 @@ function overlay_button_Callback(hObject, eventdata, handles)
 % hObject    handle to overlay_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+
+
+
+%% Manual defined private functions
+%
+%
+function refresh_view(hObject, eventdata, handles)
+    
+
