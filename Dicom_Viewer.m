@@ -191,23 +191,12 @@ function slider1_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 handles.output = hObject;
-if ~isfield(handles,'CurrentImage')
-    return;
-end
-[x y z] = size(handles.CurrentImage);
-%set(handles.slice1_txt, 'min', 1);
-%set(handles.slice1_txt, 'max', x);
-if x>1
-set(handles.slider1, 'SliderStep', [1/x,1/x]);
-end
-index =int16( x * get(hObject,'Value')); 
-if ~(index>0)
-    index = 1;
-end
-set(handles.slice1_txt, 'String', num2str(index));
-hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',index);
-imshow(immx,[],'Parent',handles.view1);
+slider = handles.slider1;
+slider_txt = handles.slice1_txt;
+view = handles.view1;
+ori = 'x';
+Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
+guidata(hObject, handles);
 
 
 
@@ -234,22 +223,12 @@ function slider2_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 handles.output = hObject;
-if ~isfield(handles,'CurrentImage')
-    return;
-end
-[x y z] = size(handles.CurrentImage);
-if y>1
-set(handles.slider2, 'SliderStep', [1/y,1/y]);
-end
-index =int16( y * get(hObject,'Value')); 
-if ~(index>0)
-    index = 1;
-end
-set(handles.slice2_txt, 'String', num2str(index));
-hh = reslice_data(handles.CurrentImage);
-immy = hh.reslice('y',index);
-imshow(immy,[],'Parent',handles.view2);
-
+slider = handles.slider2;
+slider_txt = handles.slice2_txt;
+view = handles.view2;
+ori = 'y';
+Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
+guidata(hObject, handles);
 
 
 
@@ -276,23 +255,15 @@ function slider3_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 handles.output = hObject;
-if ~isfield(handles,'CurrentImage')
-    return;
-end
-[x y z] = size(handles.CurrentImage);
-
-if z>1
-set(handles.slider3, 'SliderStep', [1/z,1/z]);
-end
-index =int16( z * get(hObject,'Value')); 
-if ~(index>0)
-    index = 1;
-end
-set(handles.slice3_txt, 'String', num2str(index));
-hh = reslice_data(handles.CurrentImage);
-immz = hh.reslice('z',index);
-imshow(immz,[],'Parent',handles.view3);
+slider = handles.slider3;
+slider_txt = handles.slice3_txt;
+view = handles.view3;
+ori = 'z';
+Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
 guidata(hObject, handles);
+
+
+
 
 
 
@@ -390,6 +361,20 @@ function overlay_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Get file
+[filename,filepath] = uigetfile('D:/QIN/matlab/dicom_viewer/*.*');
+handles.output = hObject;
+if filename == 0
+    return;
+end
+name = fullfile(filepath,filename);
+data = load(name);
+data_name = char(fieldnames(data));
+% Set to overlayimage
+handles.OverlayImage = data.(data_name);
+% refresh view
+%Show_Overlay(hObject,handles);
+guidata(hObject, handles);
 
 
 function edit_gray_Callback(hObject, eventdata, handles)
@@ -481,3 +466,56 @@ function edit_z_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+%% Slider call back templete function
+% Input several parameters and all slider function will call it
+function Slider_Callback_Templete(hObject, ~, handles,slider,slider_txt,view,ori)
+%slider: handles.slider
+%slider_txt: slider's string text
+%view: handles.view
+%ori: x,y,z (text)
+%
+if ~isfield(handles,'CurrentImage')
+    return;
+end
+[x,y,z] = size(handles.CurrentImage);
+
+xx = 1;
+switch ori
+    case 'x'
+       xx = x;
+    case 'y'
+       xx = y;
+    case 'z' 
+       xx = z;
+    otherwise
+       xx = x;
+end
+        
+if xx>1
+set(slider, 'SliderStep', [1/xx,1/xx]);
+end
+index =int16( xx * get(hObject,'Value')); 
+if ~(index>0)
+    index = 1;
+end
+set(slider_txt, 'String', num2str(index));
+hh = reslice_data(handles.CurrentImage);
+
+imm = hh.reslice(ori,index);
+imshow(imm,[],'Parent',view);
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice(ori,index);
+    overlay = ind2rgb(overlay,[0 0 0;1 0 0]);
+    hold on;
+    hImage = imshow(overlay);
+    set(hImage, 'AlphaData', 0.5);
+    hold off;
+end
+
+
+
+
+

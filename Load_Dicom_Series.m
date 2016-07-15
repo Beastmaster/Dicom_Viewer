@@ -7,6 +7,7 @@
 %% Load Dicom Series
 % Description:
 %   Load Dicom series
+function dicom_series = Load_Dicom_Series( dicom_path , varargin)
 % Input: 
 %       dicom_path: a path conatining dicom data
 %       sort_option: data construction restriction method, default by
@@ -16,8 +17,8 @@
 %       dicom_series: {'tag',info,'data',data}.a series of dicom data + dicom tag information
 % Call: Search_Dicom_Path.m sort_tag2.m
 % Example: Load_Dicom_Series('D:\QIN\image\','PatientName','SeriesDescription','AcquisitionTime')
-function dicom_series = Load_Dicom_Series( dicom_path , varargin)
-clc;
+
+
 warning('off','all');
 
     if length(varargin)<1
@@ -62,7 +63,7 @@ end
 
 
 %% Sort single dicom file by a specified tag
-%
+function out = sort_tag( infos )
 %Input
 %   infos: An array of dicom infos (dicominfo)
 %   tag: Dicom tag(dicominfo), example:'PatientName','SeriesDescription','AcquisitionTime'
@@ -72,7 +73,6 @@ end
 %
 %   Output:   {'tag_value'; info_array}
 %
-function out = sort_tag( infos )
     out = [];
     % Search the info struct to find 
     field_s = fieldnames(infos);

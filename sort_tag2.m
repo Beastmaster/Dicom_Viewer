@@ -5,11 +5,11 @@
 
 
 %% Alternative version of sort tag function
+function out = sort_tag2( infos )
 %Input and output are same as sort_tag()
 %Use buffer file
-%Use containers.Map structure
-function out = sort_tag2( infos )
-    
+%Use containers.Map structure    
+
     % find all field and integrate all tag except filename
     fields = fieldnames(infos);
     fields_len = length(fields);
