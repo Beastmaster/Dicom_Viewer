@@ -141,6 +141,9 @@ function load_data_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 %handles.output = hObject;
 temp_folder = uigetdir('D:\QIN\image');
+if temp_folder == 0
+    return;
+end
 handles.DataSet = Load_Dicom_Series(temp_folder,'PatientName','SeriesDescription','AcquisitionTime');
 lists = [];
 len_set = length(handles.DataSet);
