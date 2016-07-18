@@ -22,7 +22,7 @@ function varargout = Dicom_Viewer(varargin)
 
 % Edit the above text to modify the response to help Dicom_Viewer
 
-% Last Modified by GUIDE v2.5 13-Jul-2016 16:35:03
+% Last Modified by GUIDE v2.5 18-Jul-2016 11:33:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -195,7 +195,7 @@ slider = handles.slider1;
 slider_txt = handles.slice1_txt;
 view = handles.view1;
 ori = 'x';
-Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
+Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
 guidata(hObject, handles);
 
 
@@ -227,7 +227,7 @@ slider = handles.slider2;
 slider_txt = handles.slice2_txt;
 view = handles.view2;
 ori = 'y';
-Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
+Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
 guidata(hObject, handles);
 
 
@@ -259,7 +259,7 @@ slider = handles.slider3;
 slider_txt = handles.slice3_txt;
 view = handles.view3;
 ori = 'z';
-Slider_Callback_Templete(hObject, eventdata, handles,slider,slider_txt,view,ori)
+Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
 guidata(hObject, handles);
 
 
@@ -377,6 +377,19 @@ handles.OverlayImage = data.(data_name);
 guidata(hObject, handles);
 
 
+
+% --- Executes on button press in del_overlay_pushbutton.
+function del_overlay_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to del_overlay_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.output = hObject;
+field = 'OverlayImage';
+handles = rmfield(handles, field);
+guidata(hObject, handles);
+
+
+
 function edit_gray_Callback(hObject, eventdata, handles)
 % hObject    handle to edit_gray (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -470,7 +483,7 @@ end
 
 %% Slider call back templete function
 % Input several parameters and all slider function will call it
-function Slider_Callback_Templete(hObject, ~, handles,slider,slider_txt,view,ori)
+function Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
 %slider: handles.slider
 %slider_txt: slider's string text
 %view: handles.view
@@ -504,19 +517,17 @@ set(slider_txt, 'String', num2str(index));
 hh = reslice_data(handles.CurrentImage);
 
 imm = hh.reslice(ori,index);
-%imm = imadjust(imm);
+%imm = imadjust(imm); 
 imshow(imm,[],'Parent',view);
 if isfield(handles,'OverlayImage')
     vv = reslice_data(handles.OverlayImage);
     overlay = vv.reslice(ori,index);
     overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
-    hold on;
+    hold(view,'on')
     hImage = imshow(overlay,'Parent',view);
     set(hImage, 'AlphaData', 0.3);
     hold off;
 end
-
-
 
 
 
