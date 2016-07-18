@@ -19,12 +19,34 @@ dicom_series = dicom_series.dicom_series;
 data = dicom_series(1).data;
 
 
+
+[mask,CC] = region_growing3d(data,[161 294 40]);
+
+map = colormap(jet(256));
+maska = zeros([1,size(mask)]);
+maska(1,:,:,:) = mask(:,:,:);
+maska = permute(maska,[2,3,1,4]);
+montage(maska,[],'Indices',35:50);
+
+save('mask.mat','mask');
+
+
+return
 test_file = 'D:\QIN\image\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0043.dcm';
 
 image = dicomread(test_file);
 
 
-new_img = imadjust(image);
+new_img = imadjust(image,[],[]);
+
+new_img(new_img<100)=0;
+
+aa = zeros(100,200);
+aa(1:50,1:100) = 1;
+imshow(new_img,[]);
+
+
+return;
 
 aa = (data>300);
 save('aa.mat','aa');

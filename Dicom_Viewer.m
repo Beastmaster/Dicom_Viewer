@@ -89,7 +89,7 @@ end
 handles.CurrentImage = handles.DataSet(index).data;
 handles.CurrentInfo = handles.DataSet(index).tag;
 set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
-[x y z] = size(handles.CurrentImage);
+[x,y,z] = size(handles.CurrentImage);
 hh = reslice_data(handles.CurrentImage);
 % view1 
 temp = get(handles.slider1,'Value');
@@ -165,9 +165,9 @@ end
 % refresh view
 set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
 hh = reslice_data(handles.CurrentImage);
-immx = hh.reslice('x',1);
+immx = hh.reslice('x',2);
 imshow(immx,[],'Parent',handles.view1);
-immy = hh.reslice('y',1);
+immy = hh.reslice('y',2);
 imshow(immy,[],'Parent',handles.view2);
 immz = hh.reslice('z',1);
 imshow(immz,[],'Parent',handles.view3);
@@ -496,7 +496,7 @@ end
 if xx>1
 set(slider, 'SliderStep', [1/xx,1/xx]);
 end
-index =int16( xx * get(hObject,'Value')); 
+index =int16( xx * get(slider,'Value')); 
 if ~(index>0)
     index = 1;
 end
@@ -504,14 +504,15 @@ set(slider_txt, 'String', num2str(index));
 hh = reslice_data(handles.CurrentImage);
 
 imm = hh.reslice(ori,index);
+%imm = imadjust(imm);
 imshow(imm,[],'Parent',view);
 if isfield(handles,'OverlayImage')
     vv = reslice_data(handles.OverlayImage);
     overlay = vv.reslice(ori,index);
-    overlay = ind2rgb(overlay,[0 0 0;1 0 0]);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
     hold on;
-    hImage = imshow(overlay);
-    set(hImage, 'AlphaData', 0.5);
+    hImage = imshow(overlay,'Parent',view);
+    set(hImage, 'AlphaData', 0.3);
     hold off;
 end
 
