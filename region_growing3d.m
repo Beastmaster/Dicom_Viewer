@@ -5,9 +5,10 @@
 
 
 %% Region growing method in 3d method
-%input_img: 3d original data
-%seed_pos: [x y z]
-%mask: output, a binary image
+% input_img: 3d original data
+% seed_pos: [x y z]
+% mask: output, a binary image, type: logical
+% CC: bwconncomp result
 function [mask,CC] = region_growing3d(input_img,seed_pos,vargin)
 % convert subscript to linear index
 index = sub2ind(size(input_img),seed_pos(1),seed_pos(2),seed_pos(3));

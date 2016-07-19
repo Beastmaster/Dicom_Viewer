@@ -8,10 +8,13 @@
 %  Test Script   %
 %%%%%%       %%%%%
 
-clc;
-clear;
-close all;
 
+imshow(img,[]);
+hold on;
+
+scatter(100,200,'filled');
+
+return;
 
 
 dicom_series = load('dicom_series.mat');

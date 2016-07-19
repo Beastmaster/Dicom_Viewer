@@ -22,7 +22,7 @@ function varargout = Dicom_Viewer(varargin)
 
 % Edit the above text to modify the response to help Dicom_Viewer
 
-% Last Modified by GUIDE v2.5 18-Jul-2016 11:33:49
+% Last Modified by GUIDE v2.5 19-Jul-2016 16:40:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,6 +54,8 @@ function Dicom_Viewer_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for Dicom_Viewer
 handles.output = hObject;
+
+set(hObject,'WindowButtonDownFcn',{@view3_ButtonDownFcn,hObject});
 
 % Update handles structure
 guidata(hObject, handles);
@@ -353,6 +355,21 @@ function seg_button_Callback(hObject, eventdata, handles)
 % hObject    handle to seg_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.output = hObject;
+
+mask = logical(zeros(size(handles.CurrentImage)));
+for i = 1:length(handles.Markers)
+    temp_pos = cell2mat(handles.Markers(i));
+    [temp,~] = region_growing3d(handles.CurrentImage,temp_pos);
+    
+    mask = mask | temp;
+end
+save('mask.mat','mask');
+h = msgbox('Segmentation Done!');
+guidata(hObject, handles);
+
+
+
 
 
 % --- Executes on button press in overlay_button.
@@ -387,6 +404,19 @@ handles.output = hObject;
 field = 'OverlayImage';
 handles = rmfield(handles, field);
 guidata(hObject, handles);
+
+
+
+
+% --- Executes on button press in clr_markers.
+function clr_markers_Callback(hObject, eventdata, handles)
+% hObject    handle to clr_markers (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.output = hObject;
+[handles(:).Markers] = [];
+guidata(hObject, handles);
+
 
 
 
@@ -481,6 +511,48 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on mouse press over axes background.
+function view3_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to view3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles=guidata(hObject);
+
+ax = gca;
+if ax == handles.view3
+    %disp('3');
+elseif ax == handles.view2
+    return;
+elseif ax == handles.view1
+    return;
+else
+    disp('nothing');
+    return;
+end
+
+mousepos=get(ax,'CurrentPoint');
+hold(ax,'on')
+scatter(mousepos(1,1),mousepos(1,2),'filled','Parent',ax);
+hold(ax,'off');
+
+if ~isfield(handles,'Markers')
+    [handles(:).Markers] = [];
+end
+
+[~,~,xx] = size(handles.CurrentImage);
+zz =int16( xx * get(handles.slider3,'Value')); 
+if ~(zz>0)
+    zz = 1;
+end
+mousepos = int16(mousepos);
+temp = {[mousepos(1,2) mousepos(1,1) zz]};
+handles.Markers = [handles.Markers; temp];
+
+guidata(hObject,handles)
+
+
+
+
 %% Slider call back templete function
 % Input several parameters and all slider function will call it
 function Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
@@ -526,8 +598,6 @@ if isfield(handles,'OverlayImage')
     hold(view,'on')
     hImage = imshow(overlay,'Parent',view);
     set(hImage, 'AlphaData', 0.3);
-    hold off;
+    hold(view,'off')
 end
-
-
 
