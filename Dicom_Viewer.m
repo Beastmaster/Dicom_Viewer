@@ -22,7 +22,7 @@ function varargout = Dicom_Viewer(varargin)
 
 % Edit the above text to modify the response to help Dicom_Viewer
 
-% Last Modified by GUIDE v2.5 19-Jul-2016 16:40:58
+% Last Modified by GUIDE v2.5 20-Jul-2016 12:46:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,7 +55,7 @@ function Dicom_Viewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for Dicom_Viewer
 handles.output = hObject;
 
-set(hObject,'WindowButtonDownFcn',{@view3_ButtonDownFcn,hObject});
+set(hObject,'WindowButtonUpFcn',{@view3_ButtonDownFcn,hObject});
 
 % Update handles structure
 guidata(hObject, handles);
@@ -95,28 +95,59 @@ set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
 hh = reslice_data(handles.CurrentImage);
 % view1 
 temp = get(handles.slider1,'Value');
-if temp == 0
-    immx = hh.reslice('x',1);
+if temp ==0
+    xx = 1;
 else
-    immx = hh.reslice('x',int16( x * temp));
+    xx = int16( x * temp);
 end
+immx = hh.reslice('x',xx);
 imshow(immx,[],'Parent',handles.view1);
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('x',xx);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view1,'on')
+    hImage = imshow(overlay,'Parent',handles.view1);
+    set(hImage, 'AlphaData', 0.3);
+    hold(handles.view1,'off')
+end
 % view2
 temp = get(handles.slider2,'Value');
-if temp == 0
-    immy = hh.reslice('y',1);
+if temp ==0
+    yy = 1;
 else
-    immy = hh.reslice('y',int16( y * temp));
+    yy = int16( y * temp);
 end
+immy = hh.reslice('y',yy);
 imshow(immy,[],'Parent',handles.view2);
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('y',yy);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view2,'on')
+    hImage = imshow(overlay,'Parent',handles.view2);
+    set(hImage, 'AlphaData', 0.3);
+    hold(handles.view2,'off')
+end
+
 % view3
 temp = get(handles.slider3,'Value');
 if temp ==0
-    immz = hh.reslice('z',1);
+    zz = 1;
 else
-    immz = hh.reslice('z',int16( z * temp));
+    zz = int16( z * temp);
 end
+immz = hh.reslice('z',zz);
 imshow(immz,[],'Parent',handles.view3);
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('y',zz);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view3,'on')
+    hImage = imshow(overlay,'Parent',handles.view3);
+    set(hImage, 'AlphaData', 0.5);
+    hold(handles.view3,'off')
+end
 
 guidata(hObject, handles);
 
@@ -306,9 +337,9 @@ handles.CurrentInfo = handles.DataSet(index).tag;
 set(handles.description_txt, 'String', handles.CurrentInfo.AcquisitionTime);
 set(handles.text6, 'String', num2str(index));
 % current data
-[x y z] = size(handles.CurrentImage);
+[x,y,z] = size(handles.CurrentImage);
 hh = reslice_data(handles.CurrentImage);
-% view1
+%%%%%% view1
 index =int16( x * get(handles.slider1,'Value')); 
 if ~(index>0)
     index = 1;
@@ -316,7 +347,16 @@ end
 set(handles.slider1, 'String', num2str(index));
 immz = hh.reslice('x',index);
 imshow(immz,[],'Parent',handles.view1);
-% view 2
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('x',index);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view1,'on')
+    hImage = imshow(overlay,'Parent',handles.view1);
+    set(hImage, 'AlphaData', 0.3);
+    hold(handles.view1,'off')
+end
+%%%%%% view 2
 index =int16( y * get(handles.slider2,'Value')); 
 if ~(index>0)
     index = 1;
@@ -324,7 +364,16 @@ end
 set(handles.slider2, 'String', num2str(index));
 immz = hh.reslice('y',index);
 imshow(immz,[],'Parent',handles.view2);
-% view 3
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('y',index);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view2,'on')
+    hImage = imshow(overlay,'Parent',handles.view2);
+    set(hImage, 'AlphaData', 0.3);
+    hold(handles.view2,'off')
+end
+%%%%%% view 3
 index =int16( z * get(handles.slider3,'Value')); 
 if ~(index>0)
     index = 1;
@@ -332,6 +381,15 @@ end
 set(handles.slider3, 'String', num2str(index));
 immz = hh.reslice('z',index);
 imshow(immz,[],'Parent',handles.view3);
+if isfield(handles,'OverlayImage')
+    vv = reslice_data(handles.OverlayImage);
+    overlay = vv.reslice('z',index);
+    overlay = ind2rgb(overlay,[0 0 0;0 0 1]);
+    hold(handles.view3,'on')
+    hImage = imshow(overlay,'Parent',handles.view3);
+    set(hImage, 'AlphaData', 0.3);
+    hold(handles.view3,'off')
+end
 
 guidata(hObject, handles);
 
@@ -340,11 +398,6 @@ guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function slider_time_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider_time (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
@@ -352,20 +405,18 @@ end
 
 % --- Executes on button press in seg_button.
 function seg_button_Callback(hObject, eventdata, handles)
-% hObject    handle to seg_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 handles.output = hObject;
-
 mask = logical(zeros(size(handles.CurrentImage)));
 for i = 1:length(handles.Markers)
     temp_pos = cell2mat(handles.Markers(i));
-    [temp,~] = region_growing3d(handles.CurrentImage,temp_pos);
+    [temp,~,~] = region_growing3d(handles.CurrentImage,temp_pos);
     
     mask = mask | temp;
 end
-save('mask.mat','mask');
-h = msgbox('Segmentation Done!');
+save_name = fullfile(pwd,'mask.mat');
+save(save_name,'mask');
+msgbox('Segmentation Done!');
+handles.OverlayImage = mask;
 guidata(hObject, handles);
 
 
@@ -374,12 +425,9 @@ guidata(hObject, handles);
 
 % --- Executes on button press in overlay_button.
 function overlay_button_Callback(hObject, eventdata, handles)
-% hObject    handle to overlay_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % Get file
-[filename,filepath] = uigetfile('D:/QIN/matlab/dicom_viewer/*.*');
+default_path = fullfile(pwd,'*.mat');
+[filename,filepath] = uigetfile(default_path);
 handles.output = hObject;
 if filename == 0
     return;
@@ -397,9 +445,6 @@ guidata(hObject, handles);
 
 % --- Executes on button press in del_overlay_pushbutton.
 function del_overlay_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to del_overlay_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 handles.output = hObject;
 field = 'OverlayImage';
 handles = rmfield(handles, field);
@@ -410,12 +455,53 @@ guidata(hObject, handles);
 
 % --- Executes on button press in clr_markers.
 function clr_markers_Callback(hObject, eventdata, handles)
-% hObject    handle to clr_markers (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 handles.output = hObject;
 [handles(:).Markers] = [];
 guidata(hObject, handles);
+
+
+% --- Executes on mouse press over axes background.
+function view3_ButtonDownFcn(hObject, eventdata, handles)
+handles=guidata(hObject);
+ax = gca;
+if ax == handles.view3
+    %disp('3');
+elseif ax == handles.view2
+    return;
+elseif ax == handles.view1
+    return;
+else
+    disp('nothing');
+    return;
+end
+mousepos=get(ax,'CurrentPoint');
+hold(ax,'on')
+scatter(mousepos(1,1),mousepos(1,2),'filled','Parent',ax);
+hold(ax,'off');
+if ~isfield(handles,'Markers')
+    [handles(:).Markers] = [];
+end
+[~,~,xx] = size(handles.CurrentImage);
+zz =int16( xx * get(handles.slider3,'Value')); 
+if ~(zz>0)
+    zz = 1;
+end
+mousepos = int16(mousepos);
+temp = {[mousepos(1,2) mousepos(1,1) zz]};
+handles.Markers = [handles.Markers; temp];
+temp_pos = cell2mat(temp);
+if ~isempty(find(temp_pos<=0))
+    return;
+end
+set(handles.edit_x,'String',temp_pos(1));
+set(handles.edit_y,'String',temp_pos(2));
+set(handles.edit_z,'String',temp_pos(3));
+idx = sub2ind(size(handles.CurrentImage),temp_pos(1),temp_pos(2),temp_pos(3));
+gray_value = num2str(handles.CurrentImage(idx));
+set(handles.edit_gray,'String',gray_value);
+
+guidata(hObject,handles)
+
 
 
 
@@ -511,47 +597,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on mouse press over axes background.
-function view3_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to view3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-handles=guidata(hObject);
-
-ax = gca;
-if ax == handles.view3
-    %disp('3');
-elseif ax == handles.view2
-    return;
-elseif ax == handles.view1
-    return;
-else
-    disp('nothing');
-    return;
-end
-
-mousepos=get(ax,'CurrentPoint');
-hold(ax,'on')
-scatter(mousepos(1,1),mousepos(1,2),'filled','Parent',ax);
-hold(ax,'off');
-
-if ~isfield(handles,'Markers')
-    [handles(:).Markers] = [];
-end
-
-[~,~,xx] = size(handles.CurrentImage);
-zz =int16( xx * get(handles.slider3,'Value')); 
-if ~(zz>0)
-    zz = 1;
-end
-mousepos = int16(mousepos);
-temp = {[mousepos(1,2) mousepos(1,1) zz]};
-handles.Markers = [handles.Markers; temp];
-
-guidata(hObject,handles)
-
-
-
 
 %% Slider call back templete function
 % Input several parameters and all slider function will call it
@@ -560,7 +605,6 @@ function Slider_Callback_Templete(handles,slider,slider_txt,view,ori)
 %slider_txt: slider's string text
 %view: handles.view
 %ori: x,y,z (text)
-%
 if ~isfield(handles,'CurrentImage')
     return;
 end
@@ -600,4 +644,3 @@ if isfield(handles,'OverlayImage')
     set(hImage, 'AlphaData', 0.3);
     hold(view,'off')
 end
-

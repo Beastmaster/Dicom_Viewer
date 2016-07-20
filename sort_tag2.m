@@ -43,13 +43,16 @@ function out = sort_tag2( infos )
     % Read data
     out = [];
     kk = keys(mapObj);
+    hw = waitbar(0,'Loading dicom files');
     for i = 1: length(kk)
+        waitbar(i/length(kk));
         vv = mapObj(char(kk(i)));
         % read data set
         [data,info ]= read_series(vv);
         ss = struct('tag',info,'data',data);
         out = [out;ss];
     end
+    close(hw);
 end
 
 

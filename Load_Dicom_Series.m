@@ -33,7 +33,9 @@ warning('off','all');
     
     %%%% Extract specified dicom tags
     info_struct = [];% new a empty structure
+    hw = waitbar(0,'Parsing dicom tags...');
     for i = 1:length(dicom_list)
+        waitbar(i/length(dicom_list));
         info = dicominfo(char(dicom_list(i)));
         temp_struct = [];
         temp_struct = setfield(temp_struct,'Filename',info.Filename); % tag: Filename are added auto
@@ -50,6 +52,7 @@ warning('off','all');
         end
         info_struct = [info_struct temp_struct];
     end
+    close(hw);
     disp('All dicom tag informations are extracted!');
     
     %%%% Sort tag

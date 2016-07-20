@@ -8,11 +8,16 @@
 %  Test Script   %
 %%%%%%       %%%%%
 
+dat = load('C:\Users\QIN\Documents\MATLAB\mask.mat');
+mask = dat.mask;
 
-imshow(img,[]);
-hold on;
+dat = load('C:\Users\QIN\Documents\MATLAB\thre.mat');
+%mask = dat.thre;
 
-scatter(100,200,'filled');
+maska = zeros([1,size(mask)]);
+maska(1,:,:,:) = mask(:,:,:);
+maska = permute(maska,[2,3,1,4]);
+montage(maska,[],'Indices',65:75);
 
 return;
 
@@ -20,9 +25,6 @@ return;
 dicom_series = load('dicom_series.mat');
 dicom_series = dicom_series.dicom_series;
 data = dicom_series(1).data;
-
-
-
 [mask,CC] = region_growing3d(data,[161 294 40]);
 
 map = colormap(jet(256));
