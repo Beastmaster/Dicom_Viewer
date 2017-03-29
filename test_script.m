@@ -10,14 +10,20 @@
 
 
 %% test median filter
+clear;
 close all;
-img = dicomread('E:\BaiduNetdiskDownload\breast\content\Zhang_Yan\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0044.dcm');
 
-img2 = de_noise(img);
+img = dicomread('E:\BaiduNetdiskDownload\breast\content\Zhang_Yan\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0038.dcm');
+
+% shift left
+img_left = uint16(zeros(size(img)));
+l_shift = 2;
+img_left(1:size(img,1)-l_shift,:) = img(l_shift+1:size(img,1),:);
+img = abs(img-img_left);
+
+%img = img>80;
 
 imshow(img,[]);
-figure;
-imshow(img2,[])
 return
 
 

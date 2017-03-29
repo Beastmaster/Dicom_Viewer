@@ -408,8 +408,9 @@ function seg_button_Callback(hObject, eventdata, handles)
 handles.output = hObject;
 mask = logical(zeros(size(handles.CurrentImage)));
 for i = 1:length(handles.Markers)
-    temp_pos = cell2mat(handles.Markers(i));
-    [temp,~,~] = region_growing3d(handles.CurrentImage,temp_pos);
+    temp_pos = handles.Markers{i};    %temp_pos = cell2mat(handles.Markers(i));
+    %[temp,~,~] = region_threshold(handles.CurrentImage,temp_pos);
+    temp = region_growing3d(handles.CurrentImage,temp_pos);
     
     mask = mask | temp;
 end
