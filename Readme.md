@@ -23,11 +23,11 @@ Matlab version of dicom series viewer
 - reslice_data: Reslice view of data
 
 
-## Others:
+# Others:
 	test_script: useless, for testing only
 
 
-## Notes:
+# Notes:
 	Load overlay: a .mat format file. Generated from segmentation
 
 

@@ -66,6 +66,7 @@ end
 
 
 %% Sort single dicom file by a specified tag
+% This function is deprecated
 function out = sort_tag( infos )
 %Input
 %   infos: An array of dicom infos (dicominfo)

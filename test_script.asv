@@ -10,14 +10,11 @@
 
 
 %% test median filter
-close all;
-img = dicomread('E:\BaiduNetdiskDownload\breast\content\Zhang_Yan\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0044.dcm');
+img = dicomread('E:\BaiduNetdiskDownload\breast\content\Zhang_Yan\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0023.dcm');
 
 img2 = de_noise(img);
 
 imshow(img,[]);
-figure;
-imshow(img2,[])
 return
 
 
