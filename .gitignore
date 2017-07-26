@@ -1,6 +1,9 @@
 
+*.ignore
 *.asv
 *.mat
+*.nii
 
-
+GMM*
+hm*
 

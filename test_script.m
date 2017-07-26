@@ -8,10 +8,34 @@
 %  Test Script   %
 %%%%%%       %%%%%
 
+img = imread('\\192.168.1.139\homes\WorkPlace\eos_keras\unet\tmp\res\12-14-15_14h55m31_Y7427156_face.png');
+
+se = strel('rectangle',[10,20]);
+im = imopen(img,se);
+im = imopen(im,se);
+
+imshow(im,[]);
+
+return;
 
 %% test median filter
 clear;
 close all;
+
+img = load_nii('03.nii');
+img3 = img.img;
+
+imgh = load_nii('06.nii');
+img6 = imgh.img;
+
+sub = img6-img3;
+
+imgh.img = sub;
+save_nii(imgh,'sub.nii');
+
+
+
+return ;
 
 img = dicomread('E:\BaiduNetdiskDownload\breast\content\Zhang_Yan\Breast_Lesion_Evaluation - MR20150907112422\SUB_S8S6_1_101\IM-0008-0038.dcm');
 
