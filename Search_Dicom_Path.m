@@ -23,7 +23,7 @@ for i=1:length(lst)
     if ~cur_name.isdir
         nn = fullfile(path,cur_name.name);
         [~,~,ext] = fileparts(nn);
-        if strcmp(ext,'.dcm');
+        if (strcmp(ext,'.dcm')|| strcmp(ext,'.DCM'));
             dicom_list = [dicom_list;nn];
         end
     else

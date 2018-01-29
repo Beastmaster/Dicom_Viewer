@@ -44,7 +44,11 @@ warning('off','all');
             field = char(varargin(j));
             % struct field value
             if strcmp(varargin(j),'PatientName')
-               value = strcat(info.PatientName.FamilyName,info.PatientName.GivenName);
+               try
+                   value = strcat(info.PatientName.FamilyName,info.PatientName.GivenName);
+               catch
+                   value = strcat(info.PatientName.FamilyName);
+               end
             else
                value = info.(char(varargin(j)));
             end
